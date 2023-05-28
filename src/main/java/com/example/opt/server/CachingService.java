@@ -13,14 +13,14 @@ public class CachingService {
 
 
     public Student put(Student student) {
-       KeyStats keyStats =  studentCacheRepository.put(student);
-        keyStatsCacheRepository.put(keyStats);
+       KeyMetrics keyMetrics =  studentCacheRepository.put(student);
+       keyStatsCacheRepository.put(keyMetrics);
         return student;
     }
 
     public Student get(Long id) {
         Student student = studentCacheRepository.get(id);
-        if (student !=null) {
+        if (student != null) {
             keyStatsCacheRepository.increment(id);
         }
         return student;

@@ -2,8 +2,7 @@ package com.example.opt.client;
 
 
 import com.example.opt.server.CachingService;
-import com.example.opt.server.KeyStats;
-import com.example.opt.server.KeyStatsCacheRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
