@@ -12,7 +12,10 @@ import java.io.Serializable;
 public class KeyStats implements Serializable {
 
     private String key;
-    private Long queryFrequency;
-    private Long objectSize;
+    private Long frequency;
+    private Long size;
+    private Long insertedTime;
+    private Long lastQueriedTime;
+    private Double weight;
 
 }

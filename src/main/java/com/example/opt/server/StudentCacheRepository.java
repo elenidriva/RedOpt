@@ -33,14 +33,9 @@ public class StudentCacheRepository {
         return bucketKeys == null ? emptySet() : bucketKeys.stream().map(StudentCacheRepository::fromKey).collect(Collectors.toSet());
     }
 
-    public KeyStats put(final Student student) {
+    public KeyMetrics put(final Student student) {
         valueOperations.set(toKey(student.getId()), student);
-        // Size of DB:
-        // redisTemplate.getConnectionFactory().getConnection().serverCommands().dbSize();
-        // Memory properties:
-        // Properties properties = redisTemplate.getConnectionFactory().getConnection().serverCommands().info("memory").get()
-
-       return new KeyStats(KeyStatsCacheRepository.toKey(student.getId()), 0L, valueOperations.size(toKey(student.getId())));
+        return new KeyMetrics(student.getId(), valueOperations.size(toKey(student.getId())));
     }
 
     public Student get(final String id) {

@@ -22,5 +22,16 @@ spring:
     port: 6379
     password: redis
 
+
 server:
     port: 8080
+
+redis:
+  eviction:
+    # The threshold after which the eviction mechanism will be activated.
+    # Depicts a percentage of the memory used. 80% memory used
+    memoryUsageThreshold: 75.50
+    # The minutes an entry is considered fresh and does not constitute an eviction candidate.
+    # Time in Millis. For instance, 10 minutes protection: 10 * 60 * 1000 = 600000
+    freshnessThreshold: 500000
+    # Perhaps SLA
