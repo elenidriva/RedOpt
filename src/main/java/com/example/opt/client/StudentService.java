@@ -22,7 +22,7 @@ public class StudentService {
     private final CachingService cachingService;
 
     public Student getStudent(Long id) {
-      // studentRepository.save()
+        log.info(String.format("Attempting to retrieve Student with id: [%s].", id));
         Student student = cachingService.get(id);
        if (student == null) {
            return studentRepository.findById(id).orElseThrow(() -> new RuntimeException("The student does not exist."));
@@ -41,7 +41,7 @@ public class StudentService {
 
 
     public void delete(Long id) {
-        log.info("Deleting student.");
+        log.info(String.format("Deleting student with id: [%s]", id));
         studentRepository.deleteById(id);
         cachingService.delete(id);
         log.info("Deleted student.");

@@ -12,10 +12,9 @@ public class CachingService {
     private final KeyStatsCacheRepository keyStatsCacheRepository;
 
 
-    public Student put(Student student) {
+    public void put(Student student) {
        KeyMetrics keyMetrics =  studentCacheRepository.put(student);
        keyStatsCacheRepository.put(keyMetrics);
-        return student;
     }
 
     public Student get(Long id) {

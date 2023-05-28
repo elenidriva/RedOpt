@@ -6,7 +6,7 @@ import lombok.Data;
 import javax.persistence.*;
 import java.io.Serializable;
 
-//@RedisHash("Student")
+
 @Data
 @Entity
 @Table(name="student")
@@ -26,5 +26,5 @@ public class Student implements Serializable {
     public Student() {
 
     }
-    // ...
+
 }
