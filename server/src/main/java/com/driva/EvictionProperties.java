@@ -1,4 +1,4 @@
-package com.example.opt.server;
+package com.driva;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

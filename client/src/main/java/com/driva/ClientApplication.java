@@ -1,16 +1,14 @@
-package com.example.opt;
+package com.driva;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cache.annotation.EnableCaching;
-
 
 @SpringBootApplication
-@EnableCaching
-public class Application {
+public class ClientApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication app = new SpringApplication(ClientApplication.class);
+        app.run(args);
     }
 
 }

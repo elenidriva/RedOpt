@@ -1,4 +1,4 @@
-package com.example.opt.client;
+package com.driva;
 
 import lombok.Data;
 

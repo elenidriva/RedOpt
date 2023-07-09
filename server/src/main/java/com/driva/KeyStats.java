@@ -1,4 +1,4 @@
-package com.example.opt.server;
+package com.driva;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,0 +1,38 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/redis-opt
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQL81Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  cache:
+    type: redis
+  redis:
+    host: localhost
+    port: 6379
+    password: redis
+
+
+server:
+    port: 8081
+
+redis:
+  eviction:
+    # The threshold after which the eviction mechanism will be activated.
+    # Depicts a percentage of the memory used. 80% memory used
+    memoryUsageThreshold: 75.50
+    # The minutes an entry is considered fresh and does not constitute an eviction candidate.
+    # Time in Millis. For instance, 10 minutes protection: 10 * 60 * 1000 = 600000
+    freshnessThreshold: 500000
+    # Perhaps SLA
+

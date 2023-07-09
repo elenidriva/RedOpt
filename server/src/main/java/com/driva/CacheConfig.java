@@ -1,4 +1,4 @@
-package com.example.opt.server;
+package com.driva;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

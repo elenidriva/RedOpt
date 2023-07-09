@@ -1,4 +1,4 @@
-package com.example.opt.client;
+package com.driva;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

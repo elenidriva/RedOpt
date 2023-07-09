@@ -1,4 +1,4 @@
-package com.example.opt.server;
+package com.driva;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,6 +10,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class KeyMetrics implements Serializable {
-    private Long key;
+    private String key;
     private Long size;
 }
