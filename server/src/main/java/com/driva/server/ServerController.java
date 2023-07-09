@@ -1,4 +1,4 @@
-package com.driva;
+package com.driva.server;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +16,9 @@ public class ServerController {
         return cachingService.get(id);
     }
 
-    @PostMapping("/cache/put")
-    public void put(@RequestBody Map<String, Object> object) {
-        cachingService.put(object);
+    @PostMapping("/cache/put/{id}")
+    public void put(@PathVariable String id, @RequestBody Map<String, Object> object) {
+        cachingService.put(id, object);
     }
 
     @DeleteMapping("/cache/delete/{id}")

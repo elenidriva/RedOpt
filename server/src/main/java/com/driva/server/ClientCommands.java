@@ -1,4 +1,4 @@
-package com.driva;
+package com.driva.server;
 
 import io.lettuce.core.dynamic.Commands;
 

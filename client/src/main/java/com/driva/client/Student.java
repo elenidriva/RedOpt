@@ -1,5 +1,4 @@
-package com.driva;
-
+package com.driva.client;
 
 import lombok.Data;
 
@@ -16,11 +15,15 @@ public class Student implements Serializable {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
-    @Column(name="student_name", length=50, nullable=false, unique=false)
+    @Column(name="name", length=50, nullable=false)
     private String name;
 
-    public Student(String name) {
+    @Column(name="surname", length=50, nullable=false)
+    private String surname;
+
+    public Student(String name, String surname) {
         this.name = name;
+        this.surname = surname;
     }
 
     public Student() {

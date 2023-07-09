@@ -1,4 +1,4 @@
-package com.driva;
+package com.driva.server;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,8 +13,8 @@ public class CachingService {
     private final KeyStatsCacheRepository keyStatsCacheRepository;
 
 
-    public void put(Map<String, Object> object) {
-       KeyMetrics keyMetrics =  cacheRepository.put(object);
+    public void put(String id, Map<String, Object> object) {
+       KeyMetrics keyMetrics =  cacheRepository.put(id, object);
        keyStatsCacheRepository.put(keyMetrics);
     }
 

@@ -1,4 +1,4 @@
-package com.driva;
+package com.driva.client;
 
 import lombok.Data;
 
@@ -7,5 +7,6 @@ public class StudentDTO {
 
     private Long id;
     private String name;
+    private String surname;
     // ...
 }

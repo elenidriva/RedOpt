@@ -1,4 +1,4 @@
-package com.driva;
+package com.driva.server;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +62,7 @@ public class KeyStatsCacheRepository {
         KeyStats retrievedKeyStats = (KeyStats) valueOperations.get(toKey(keyMetrics.getKey()));
         if (retrievedKeyStats != null) {
             retrievedKeyStats.setFrequency(retrievedKeyStats.getFrequency());
+            retrievedKeyStats.setSize(keyMetrics.getSize());
             retrievedKeyStats.setLastQueriedTime(System.currentTimeMillis());
            // retrievedKeyStats.setWeight();
             valueOperations.set(retrievedKeyStats.getKey(), retrievedKeyStats);
@@ -89,7 +90,12 @@ public class KeyStatsCacheRepository {
 
 
     public KeyStats increment(final String id) {
-        return (KeyStats) valueOperations.get(toKey(id));
+        KeyStats keyStats = (KeyStats) valueOperations.get(toKey(id));
+        keyStats.setFrequency(keyStats.getFrequency() + 1);
+        update(keyStats);
+        KeyStats updatedStats = get(String.valueOf(id));
+        log.info(String.format("KeyStats for [%s]: Size: [%s] and Frequency: [%s]", id, updatedStats.getSize(), updatedStats.getFrequency()));
+        return updatedStats;
     }
 
     public void increment(final KeyStats keyStats) {
@@ -98,14 +104,6 @@ public class KeyStatsCacheRepository {
         KeyStats updatedStats = getWithKey(keyStats.getKey());
         log.info(String.format("KeyStats for [%s]: Size: [%s] and Frequency: [%s]", fromKey(keyStats.getKey()), updatedStats.getSize(), updatedStats.getFrequency()));
     }
-
-    public void increment(final Long id) {
-        KeyStats keyStats = (KeyStats) valueOperations.get(toKey(id));
-        keyStats.setFrequency(keyStats.getFrequency() + 1);
-        update(keyStats);
-        KeyStats updatedStats = get(String.valueOf(id));
-        log.info(String.format("KeyStats for [%s]: Size: [%s] and Frequency: [%s]", id, updatedStats.getSize(), updatedStats.getFrequency()));
-        }
 
     public void delete(final String id) {
         valueOperations.getOperations().delete(toKey(id));

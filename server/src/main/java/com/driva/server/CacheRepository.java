@@ -1,4 +1,4 @@
-package com.driva;
+package com.driva.server;
 
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -32,9 +32,10 @@ public class CacheRepository {
         return bucketKeys == null ? emptySet() : bucketKeys.stream().map(CacheRepository::fromKey).collect(Collectors.toSet());
     }
 
-    public KeyMetrics put(final Map<String, Object> object) {
-        valueOperations.set(toKey((String) object.get("id")), object);
-        return new KeyMetrics((String) object.get("id"), valueOperations.size(toKey((String) object.get("id"))));
+    public KeyMetrics put(final String id, final Map<String, Object> object) {
+
+        valueOperations.set(toKey(id), object);
+        return new KeyMetrics(id, valueOperations.size(toKey(id)));
     }
 
     public Map<String, Object> get(final String id) {

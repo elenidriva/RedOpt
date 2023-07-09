@@ -1,4 +1,4 @@
-package com.driva;
+package com.driva.client;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

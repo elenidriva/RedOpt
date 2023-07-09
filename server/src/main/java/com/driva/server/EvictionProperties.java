@@ -1,4 +1,4 @@
-package com.driva;
+package com.driva.server;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

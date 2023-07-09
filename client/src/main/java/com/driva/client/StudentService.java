@@ -1,4 +1,4 @@
-package com.driva;
+package com.driva.client;
 
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class StudentService {
     public Student getStudent(Long id) {
         log.info(String.format("Attempting to retrieve Student with id: [%s].", id));
         Student student = restTemplate
-                .getForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/get").buildAndExpand("id", id.toString()).toUri(), Student.class);
+                .getForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/get/{id}").buildAndExpand(id.toString()).toUri(), Student.class);
        if (student == null) {
            return studentRepository.findById(id).orElseThrow(() -> new RuntimeException("The student does not exist."));
        }
@@ -31,11 +31,11 @@ public class StudentService {
 
     public Student createStudent(StudentDTO studentDTO) {
         log.info("Saving student.");
-        Student student = new Student(studentDTO.getName());
+        Student student = new Student(studentDTO.getName(), studentDTO.getSurname());
         Student st = studentRepository.save(student);
-        restTemplate.postForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/put")
-                        .buildAndExpand("id", st.getId().toString())
-                        .toUri(), student, Student.class);
+        restTemplate.postForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/put/{id}")
+                        .buildAndExpand(st.getId().toString())
+                        .toUri(), student, Void.class);
         return st;
     }
 
@@ -43,8 +43,8 @@ public class StudentService {
     public void delete(Long id) {
         log.info(String.format("Deleting student with id: [%s]", id));
         studentRepository.deleteById(id);
-        restTemplate.delete(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/delete")
-                        .buildAndExpand("id", id.toString())
+        restTemplate.delete(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/delete/{id}")
+                        .buildAndExpand(id.toString())
                         .toUri());
         log.info("Deleted student.");
 
@@ -56,10 +56,11 @@ public class StudentService {
         student.ifPresent(student1 -> {
             log.info("Student found.");
             student1.setName(studentDTO.getName());
+            student1.setSurname(studentDTO.getSurname());
             studentRepository.save(student1);
-            restTemplate.put(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/put")
-                            .buildAndExpand("id", student1.getId().toString())
-                            .toUri(), student);
+            restTemplate.postForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/put/{id}")
+                            .buildAndExpand(student1.getId().toString())
+                            .toUri(), student, Void.class);
         });
     }
 
