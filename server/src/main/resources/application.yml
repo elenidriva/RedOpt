@@ -35,4 +35,8 @@ redis:
     # Time in Millis. For instance, 10 minutes protection: 10 * 60 * 1000 = 600000
     freshnessThreshold: 500000
     # Perhaps SLA
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus

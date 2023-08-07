@@ -1,12 +1,16 @@
 package com.driva.client;
 
 
+import aj.org.objectweb.asm.TypeReference;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -27,6 +31,15 @@ public class StudentService {
        }
 
         return student;
+    }
+
+
+    public List<Student> getStudents() {
+        log.info(String.format("Attempting to retrieve Students"));
+        List<Student> students = restTemplate
+                .getForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/get/").build().toUri(), List.class);
+            return studentRepository.findAll();
+
     }
 
     public Student createStudent(StudentDTO studentDTO) {

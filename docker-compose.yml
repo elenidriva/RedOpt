@@ -5,18 +5,30 @@ services:
     restart: always
     ports:
       - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning --requirepass "redis" --maxmemory 256mb
+    command: redis-server --save 20 1 --loglevel warning --requirepass "redis" --maxmemory 25mb
     volumes:
       - cache:/data
   postgres:
     image: postgres:14.2-alpine
-    container_name: postgres
+
     ports:
-      - "5432:5432"
+      - "5433:5433"
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=redis-opt
+  prometheus:
+    image: prom/prometheus:v2.35.0
+    network_mode: host
+    container_name: prometheus
+    ports:
+    - "9090:9090"
+    restart: unless-stopped
+    volumes:
+      - ./data/prometheus/config:/etc/prometheus/
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--web.enable-lifecycle'
 volumes:
   cache:
     driver: local
