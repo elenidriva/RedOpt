@@ -8,7 +8,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     show-sql: false
     properties:
       hibernate:
@@ -35,6 +35,10 @@ redis:
     # Time in Millis. For instance, 10 minutes protection: 10 * 60 * 1000 = 600000
     freshnessThreshold: 500000
     # Perhaps SLA
+    scheduler:
+      cron:
+        expression: 30 * * * * ?
+
 management:
   endpoints:
     web:

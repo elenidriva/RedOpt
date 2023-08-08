@@ -42,8 +42,12 @@ public class KeyStatsCacheRepository {
     }
 
     public Double percentageOccupied() {
-        return (double) (((parseLong(getMaxMemory()) - parseLong(getUsedMemory())) * 100) / parseLong(getMaxMemory()));
+        return (double) ((parseLong(getUsedMemory())) * 100) / parseLong(getMaxMemory());
     }
+
+//    public Double percentageOccupied() {
+//        return (double) (((parseLong(getMaxMemory()) - parseLong(getUsedMemory())) * 100) / parseLong(getMaxMemory()));
+//    }
 
     public String getMaxMemoryHuman() {
         return redisTemplate.getConnectionFactory().getConnection().serverCommands().info("memory").getProperty("maxmemory_human");
@@ -51,6 +55,9 @@ public class KeyStatsCacheRepository {
 
     public String getUsedMemoryHuman() {
         return redisTemplate.getConnectionFactory().getConnection().serverCommands().info("memory").getProperty("used_memory_human");
+    }
+    public Long dbSize() {
+        return redisTemplate.getConnectionFactory().getConnection().serverCommands().dbSize();
     }
 
     public Set<String> getKeys() {
@@ -69,6 +76,7 @@ public class KeyStatsCacheRepository {
         } else {
             valueOperations.set(toKey(keyMetrics.getKey()), createKeyStats(keyMetrics));
         }
+        log.info(String.format("Memory occupied [%s]", percentageOccupied()));
     }
 
     private static KeyStats createKeyStats(KeyMetrics keyMetrics) {
@@ -92,9 +100,11 @@ public class KeyStatsCacheRepository {
     public KeyStats increment(final String id) {
         KeyStats keyStats = (KeyStats) valueOperations.get(toKey(id));
         keyStats.setFrequency(keyStats.getFrequency() + 1);
+        keyStats.setLastQueriedTime(System.currentTimeMillis());
         update(keyStats);
         KeyStats updatedStats = get(String.valueOf(id));
-        log.info(String.format("KeyStats for [%s]: Size: [%s] and Frequency: [%s]", id, updatedStats.getSize(), updatedStats.getFrequency()));
+        log.info(String.format("KeyStats for [%s]: Size: [%s] and Frequency: [%s] and LastQueriedTime: [%s]",
+                id, updatedStats.getSize(), updatedStats.getFrequency(), updatedStats.getLastQueriedTime()));
         return updatedStats;
     }
 

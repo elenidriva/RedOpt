@@ -30,5 +30,15 @@ public class ServerController {
         cachingService.delete(id);
     }
 
+    @GetMapping("/cache/memory-stats")
+    public MemoryStats getMemoryStats() {
+       return cachingService.getMemoryStats();
+    }
+
+    @GetMapping("/cache/key-stats/{id}")
+    public KeyStats getKeyStats(@PathVariable String id) {
+        return cachingService.getKeyStats(id);
+    }
+
 }
 

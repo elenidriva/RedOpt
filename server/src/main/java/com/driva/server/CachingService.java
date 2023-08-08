@@ -30,4 +30,19 @@ public class CachingService {
         cacheRepository.delete(id);
         keyStatsCacheRepository.delete(id);
     }
+
+    public MemoryStats getMemoryStats() {
+       return new MemoryStats(
+                keyStatsCacheRepository.getMaxMemory(),
+                keyStatsCacheRepository.getUsedMemory(),
+                keyStatsCacheRepository.getMaxMemoryHuman(),
+                keyStatsCacheRepository.getUsedMemoryHuman(),
+                keyStatsCacheRepository.percentageOccupied(),
+                keyStatsCacheRepository.dbSize()
+        );
+    }
+
+    public KeyStats getKeyStats(String id) {
+        return keyStatsCacheRepository.getWithKey(id);
+    }
 }

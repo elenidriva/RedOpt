@@ -11,5 +11,4 @@ public class EvictionProperties {
 
     private Double memoryUsageThreshold = 80.00;
     private Long freshnessThreshold = 600000L;
-
 }
