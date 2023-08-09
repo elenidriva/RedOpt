@@ -27,23 +27,23 @@ public class CacheRepository {
         this.redisTemplate = redisTemplate;
     }
 
-    public Set<String> getKeys() {
-        final Set<String> bucketKeys = valueOperations.getOperations().keys(toKey("*"));
-        return bucketKeys == null ? emptySet() : bucketKeys.stream().map(CacheRepository::fromKey).collect(Collectors.toSet());
-    }
 
     public KeyMetrics put(final String id, final Map<String, Object> object) {
-
         valueOperations.set(toKey(id), object);
         return new KeyMetrics(id, valueOperations.size(toKey(id)));
     }
 
     public Map<String, Object> get(final String id) {
-        return ( Map<String, Object> ) valueOperations.get(toKey(id));
+        return (Map<String, Object>) valueOperations.get(toKey(id));
     }
 
     public void delete(final String id) {
         valueOperations.getOperations().delete(toKey(id));
+    }
+
+    public Set<String> getKeys() {
+        final Set<String> bucketKeys = valueOperations.getOperations().keys(toKey("*"));
+        return bucketKeys == null ? emptySet() : bucketKeys.stream().map(CacheRepository::fromKey).collect(Collectors.toSet());
     }
 
     private static String toKey(String id) {

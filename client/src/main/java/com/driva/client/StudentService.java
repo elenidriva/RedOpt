@@ -27,7 +27,10 @@ public class StudentService {
         Student student = restTemplate
                 .getForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/get/{id}").buildAndExpand(id.toString()).toUri(), Student.class);
        if (student == null) {
-           return studentRepository.findById(id).orElseThrow(() -> new RuntimeException("The student does not exist."));
+           student =  studentRepository.findById(id).orElseThrow(() -> new RuntimeException("The student does not exist."));
+           restTemplate.postForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/put/{id}")
+                   .buildAndExpand(student.getId().toString())
+                   .toUri(), student, Void.class);
        }
 
         return student;

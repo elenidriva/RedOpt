@@ -6,11 +6,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Data
 @Configuration
-@ConfigurationProperties("redis.eviction")
-public class EvictionProperties {
+@ConfigurationProperties("redis.eviction.scheduler")
+public class EvictionSchedulerProperties {
 
     private Double memoryUsageThreshold = 80.00;
     private Long freshnessThreshold = 600000L;
-    private Double cacheMissWeight = 50.0;
-    private Double objectSizeWeight = 50.0;
+
 }

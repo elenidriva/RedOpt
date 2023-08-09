@@ -38,6 +38,13 @@ redis:
     scheduler:
       cron:
         expression: 30 * * * * ?
+  cleanup:
+    # To be used to clean up in-memory keys (due to cache miss) that are stored at least for the specified window time.
+    # Time in Millis.
+    window: 30000
+    scheduler:
+      cron:
+        expression: * /2 * * * ?
 
 management:
   endpoints:

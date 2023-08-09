@@ -18,14 +18,11 @@ public class EvictionScheduler {
     public void process() {
         log.info("========= Starting eviction task =========");
         // Phases: Early Mid Late Game
-        //
-
         if (keyStatsCacheRepository.percentageOccupied() > evictionProperties.getMemoryUsageThreshold()) {
             log.info("Invoking eviction mechanism");
         } else {
             log.info("No need to invoke eviction mechanism");
         }
-
         log.info("========= Finished eviction task =========");
     }
 }

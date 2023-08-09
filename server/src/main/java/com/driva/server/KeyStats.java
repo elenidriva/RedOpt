@@ -14,8 +14,13 @@ public class KeyStats implements Serializable {
     private String key;
     private Long frequency;
     private Long size;
+
     private Long insertedTime;
     private Long lastQueriedTime;
+
+    private Long cacheMissFrequency;
+    private Long cacheMissDurationTime;
+
     private Double weight;
 
 }

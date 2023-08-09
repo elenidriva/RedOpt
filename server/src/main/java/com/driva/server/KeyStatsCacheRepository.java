@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,7 @@ public class KeyStatsCacheRepository {
         this.evictionProperties = evictionProperties;
     }
 
+    //TODO: Extract these elsewhere as they are not related to KeyStats Context.
     public String getMaxMemory() {
         return redisTemplate.getConnectionFactory().getConnection().serverCommands().info("memory").getProperty("maxmemory");
     }
@@ -45,10 +47,6 @@ public class KeyStatsCacheRepository {
         return (double) ((parseLong(getUsedMemory())) * 100) / parseLong(getMaxMemory());
     }
 
-//    public Double percentageOccupied() {
-//        return (double) (((parseLong(getMaxMemory()) - parseLong(getUsedMemory())) * 100) / parseLong(getMaxMemory()));
-//    }
-
     public String getMaxMemoryHuman() {
         return redisTemplate.getConnectionFactory().getConnection().serverCommands().info("memory").getProperty("maxmemory_human");
     }
@@ -56,6 +54,7 @@ public class KeyStatsCacheRepository {
     public String getUsedMemoryHuman() {
         return redisTemplate.getConnectionFactory().getConnection().serverCommands().info("memory").getProperty("used_memory_human");
     }
+
     public Long dbSize() {
         return redisTemplate.getConnectionFactory().getConnection().serverCommands().dbSize();
     }
@@ -70,8 +69,8 @@ public class KeyStatsCacheRepository {
         if (retrievedKeyStats != null) {
             retrievedKeyStats.setFrequency(retrievedKeyStats.getFrequency());
             retrievedKeyStats.setSize(keyMetrics.getSize());
-            retrievedKeyStats.setLastQueriedTime(System.currentTimeMillis());
-           // retrievedKeyStats.setWeight();
+            // retrievedKeyStats.setLastQueriedTime(System.currentTimeMillis());
+            // retrievedKeyStats.setWeight();
             valueOperations.set(retrievedKeyStats.getKey(), retrievedKeyStats);
         } else {
             valueOperations.set(toKey(keyMetrics.getKey()), createKeyStats(keyMetrics));
@@ -80,7 +79,7 @@ public class KeyStatsCacheRepository {
     }
 
     private static KeyStats createKeyStats(KeyMetrics keyMetrics) {
-        return new KeyStats(toKey(keyMetrics.getKey()), 0L, keyMetrics.getSize(), System.currentTimeMillis(), 0L, 0.0);
+        return new KeyStats(toKey(keyMetrics.getKey()), 0L, keyMetrics.getSize(), System.currentTimeMillis(), 0L,  0L, 0L, 0.0);
     }
 
     public void update(final KeyStats keyStats) {
@@ -99,13 +98,16 @@ public class KeyStatsCacheRepository {
 
     public KeyStats increment(final String id) {
         KeyStats keyStats = (KeyStats) valueOperations.get(toKey(id));
-        keyStats.setFrequency(keyStats.getFrequency() + 1);
-        keyStats.setLastQueriedTime(System.currentTimeMillis());
-        update(keyStats);
-        KeyStats updatedStats = get(String.valueOf(id));
-        log.info(String.format("KeyStats for [%s]: Size: [%s] and Frequency: [%s] and LastQueriedTime: [%s]",
-                id, updatedStats.getSize(), updatedStats.getFrequency(), updatedStats.getLastQueriedTime()));
-        return updatedStats;
+        if(Objects.nonNull(keyStats)) {
+            keyStats.setFrequency(keyStats.getFrequency() + 1);
+            keyStats.setLastQueriedTime(System.currentTimeMillis());
+            update(keyStats);
+            KeyStats updatedStats = get(String.valueOf(id));
+            log.info(String.format("KeyStats for [%s]: Size: [%s] and Frequency: [%s] and LastQueriedTime: [%s]",
+                    id, updatedStats.getSize(), updatedStats.getFrequency(), updatedStats.getLastQueriedTime()));
+            return updatedStats;
+        }
+        return null;
     }
 
     public void increment(final KeyStats keyStats) {
@@ -119,19 +121,15 @@ public class KeyStatsCacheRepository {
         valueOperations.getOperations().delete(toKey(id));
     }
 
-    public void delete(final Long id) {
-        valueOperations.getOperations().delete(toKey(id));
+    public void updateCacheMissTime(final String id, final Long cacheMissTime) {
+        KeyStats keyStats = get(id);
+        keyStats.setCacheMissDurationTime(cacheMissTime);
+        update(keyStats);
     }
-
 
     public static String toKey(String id) {
         return METADATA_HASH + id;
     }
-
-    public static String toKey(Long id) {
-        return METADATA_HASH + id;
-    }
-
 
     private static String fromKey(final String value) {
         return value.split(METADATA_HASH)[1];
