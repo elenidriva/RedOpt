@@ -44,7 +44,7 @@ redis:
     window: 30000
     scheduler:
       cron:
-        expression: * /2 * * * ?
+        expression: 0 0/2 * * * ?
 
 management:
   endpoints:
