@@ -37,14 +37,21 @@ redis:
     # Perhaps SLA
     scheduler:
       cron:
-        expression: 30 * * * * ?
+        expression: "-"
+        # expression: 30 * * * * ?
+        # to disable set the following
+        # expression: -""
   cleanup:
     # To be used to clean up in-memory keys (due to cache miss) that are stored at least for the specified window time.
     # Time in Millis.
     window: 30000
     scheduler:
       cron:
-        expression: 0 0/2 * * * ?
+        expression: "-"
+        # expression: 0 0/2 * * * ?
+        # A special cron expression value that indicates a disabled trigger: "-".
+        # This is primarily meant for use with ${...} placeholders, allowing for external disabling of corresponding scheduled methods.
+        # expression: "-"
 
 management:
   endpoints:

@@ -4,6 +4,8 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 
 @Data
@@ -15,15 +17,23 @@ public class Student implements Serializable {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
-    @Column(name="name", length=50, nullable=false)
+    @Column(name="name", length=15000, nullable=false)
     private String name;
 
-    @Column(name="surname", length=50, nullable=false)
+    @Column(name="surname", length=15000, nullable=false)
     private String surname;
 
-    public Student(String name, String surname) {
+    @Column(name="email", length=15000, nullable=false)
+    private String email;
+
+    @Column(name="password", length=15000, nullable=false)
+    private String password;
+
+    public Student(String name, String surname, String email, String password) {
         this.name = name;
         this.surname = surname;
+        this.email = email;
+        this.password = password;
     }
 
     public Student() {

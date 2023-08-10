@@ -47,7 +47,7 @@ public class StudentService {
 
     public Student createStudent(StudentDTO studentDTO) {
         log.info("Saving student.");
-        Student student = new Student(studentDTO.getName(), studentDTO.getSurname());
+        Student student = new Student(studentDTO.getName(), studentDTO.getSurname(), studentDTO.getEmail(), studentDTO.getPassword());
         Student st = studentRepository.save(student);
         restTemplate.postForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/put/{id}")
                         .buildAndExpand(st.getId().toString())
@@ -73,6 +73,8 @@ public class StudentService {
             log.info("Student found.");
             student1.setName(studentDTO.getName());
             student1.setSurname(studentDTO.getSurname());
+            student1.setEmail(studentDTO.getEmail());
+            student1.setPassword(studentDTO.getPassword());
             studentRepository.save(student1);
             restTemplate.postForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/put/{id}")
                             .buildAndExpand(student1.getId().toString())

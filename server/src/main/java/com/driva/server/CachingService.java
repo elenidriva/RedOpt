@@ -21,10 +21,7 @@ public class CachingService {
         KeyMetrics keyMetrics = cacheRepository.put(id, object);
         keyStatsCacheRepository.put(keyMetrics);
         if (CACHE_MISS_MAPPINGS.containsKey(id)) {
-            long now = System.currentTimeMillis();
-            long cacheMissTime = now - CACHE_MISS_MAPPINGS.get(id);
-            CACHE_MISS_MAPPINGS.remove(id);
-            keyStatsCacheRepository.updateCacheMissTime(id, cacheMissTime);
+            cacheMiss(id);
         }
 
     }
@@ -32,8 +29,9 @@ public class CachingService {
     public Map<String, Object> get(String id) {
         Map<String, Object> object = cacheRepository.get(id);
         keyStatsCacheRepository.increment(id);
+        long cacheMissTime =  System.currentTimeMillis();
         if (Objects.isNull(object)) {
-            CACHE_MISS_MAPPINGS.put(id, System.currentTimeMillis());
+            CACHE_MISS_MAPPINGS.put(id, cacheMissTime);
         }
         return object;
     }
@@ -41,6 +39,13 @@ public class CachingService {
     public void delete(String id) {
         cacheRepository.delete(id);
         keyStatsCacheRepository.delete(id);
+    }
+
+    private void cacheMiss(String id) {
+        long now = System.currentTimeMillis();
+        long cacheMissTime = now - CACHE_MISS_MAPPINGS.get(id);
+        CACHE_MISS_MAPPINGS.remove(id);
+        keyStatsCacheRepository.updateCacheMissTime(id, cacheMissTime);
     }
 
     public MemoryStats getMemoryStats() {

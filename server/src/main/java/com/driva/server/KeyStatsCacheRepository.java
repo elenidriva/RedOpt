@@ -124,6 +124,7 @@ public class KeyStatsCacheRepository {
     public void updateCacheMissTime(final String id, final Long cacheMissTime) {
         KeyStats keyStats = get(id);
         keyStats.setCacheMissDurationTime(cacheMissTime);
+        keyStats.setCacheMissFrequency(keyStats.getCacheMissFrequency() + 1);
         update(keyStats);
     }
 
