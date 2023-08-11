@@ -138,7 +138,7 @@ public class KeyStatsCacheRepository {
         return METADATA_HASH + id;
     }
 
-    private static String fromKey(final String value) {
+    public static String fromKey(final String value) {
         return value.split(METADATA_HASH)[1];
     }
 }

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.driva.server.KeyStatsCacheRepository.fromKey;
+
 
 @Slf4j
 @Service
@@ -34,8 +36,10 @@ public class EvictionScheduler {
                     .collect(Collectors.toList());
             sortedWeights.stream()
                     .limit(evictionProperties.getTopEvictionCandidates())
-                    .forEach(candidate ->
-                            cachingService.delete(candidate.getKey()));
+                    .forEach(candidate -> {
+                        log.info(String.format("Evicting key [%s]", fromKey(candidate.getKey())));
+                        cachingService.delete(fromKey(candidate.getKey()));
+                    });
         } else {
             log.info("No need to invoke eviction mechanism");
         }
@@ -47,9 +51,11 @@ public class EvictionScheduler {
         List<KeyStats> entries = keyStatsCacheRepository.getAllMetadata();
         Map<String, Double> keyWeightMappings = new TreeMap<>();
         entries.forEach( entry -> {
-            Double weight = evictionProperties.getFrequencyFactor() * entry.getFrequency() * entry.getSize() +
-                    evictionProperties.getCacheMissFactor() * entry.getCacheMissFrequency() * entry.getCacheMissDurationTime();
-            keyWeightMappings.put(entry.getKey(), weight);
+            if (entry.isActive()) {
+                Double weight = evictionProperties.getFrequencyFactor() * entry.getFrequency() * entry.getSize() +
+                        evictionProperties.getCacheMissFactor() * entry.getCacheMissDurationTime();
+                keyWeightMappings.put(entry.getKey(), weight);
+            }
         });
         return keyWeightMappings;
     }

@@ -42,7 +42,7 @@ public class CachingService {
 
     public void delete(String id) {
         cacheRepository.delete(id);
-        keyStatsCacheRepository.delete(id);
+      //  keyStatsCacheRepository.delete(id);
     }
 
     private void cacheMiss(String id) {

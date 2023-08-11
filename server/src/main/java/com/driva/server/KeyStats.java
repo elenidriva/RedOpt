@@ -21,6 +21,7 @@ public class KeyStats implements Serializable {
     private Long cacheMissFrequency;
     private Long cacheMissDurationTime;
 
+    private boolean active;
     private Double weight;
 
 }
