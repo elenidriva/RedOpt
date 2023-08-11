@@ -49,6 +49,7 @@ public class StudentService {
         log.info("Saving student.");
         Student student = new Student(studentDTO.getName(), studentDTO.getSurname(), studentDTO.getEmail(), studentDTO.getPassword());
         Student st = studentRepository.save(student);
+        log.info(String.format("Saved student with id [%s].", st.getId()));
         restTemplate.postForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/put/{id}")
                         .buildAndExpand(st.getId().toString())
                         .toUri(), student, Void.class);
@@ -67,10 +68,9 @@ public class StudentService {
     }
 
     public void updateStudent(Long id, StudentDTO studentDTO) {
-        log.info("Updating student.");
+        log.info(String.format("Updating student with id: [%s]", id));
         Optional<Student> student = studentRepository.findById(id);
         student.ifPresent(student1 -> {
-            log.info("Student found.");
             student1.setName(studentDTO.getName());
             student1.setSurname(studentDTO.getSurname());
             student1.setEmail(studentDTO.getEmail());
@@ -81,25 +81,6 @@ public class StudentService {
                             .toUri(), student, Void.class);
         });
     }
-
-
-
-//  ( (total_memory - used_memory) / total_memory ) > 80%
-//  Kathe key pou mpainei i ginetai query prepei na kratame poses fores egine query - to size otan mpainei stin cache
-// i redis kanei persist ta kleidia p mpainoun - den eisxuei to idio ama kanw restat
-    // prepei na ta krataw k auta sitn cache
-
-
-    //1. me store listass mporw na parw oli ti lista kai na petaksw o,ti thelw
-    //2. me to na vazw se didaforetika keys gia ta stats pws mporw na ta querarw ola gia na dw stats.
-    //3.
-
-
-
-
-
-
-
 
 // List has element limitation The max length of a Redis list is 2^32 - 1 (4,294,967,295) elements.
 

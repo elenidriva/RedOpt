@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class CleanupProperties {
 
     private int window = 5 * 6000;
+    private Long freshnessThreshold = 600000L;
 
     private String cronExpression = "* /2 * * * ?";
 }

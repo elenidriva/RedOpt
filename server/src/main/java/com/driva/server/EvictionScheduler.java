@@ -38,6 +38,7 @@ public class EvictionScheduler {
                     .limit(evictionProperties.getTopEvictionCandidates())
                     .forEach(candidate -> {
                         log.info(String.format("Evicting key [%s]", fromKey(candidate.getKey())));
+                        // Periodic
                         cachingService.delete(fromKey(candidate.getKey()));
                     });
         } else {
@@ -46,17 +47,22 @@ public class EvictionScheduler {
         log.info("========= Finished eviction task =========");
     }
 
-
+    // lowest weights -> eviction candidates
     private Map<String, Double> weightCalculation() {
         List<KeyStats> entries = keyStatsCacheRepository.getAllMetadata();
         Map<String, Double> keyWeightMappings = new TreeMap<>();
         entries.forEach( entry -> {
-            if (entry.isActive()) {
+            if (entry.isActive() && !shouldProtect(entry)) {
                 Double weight = evictionProperties.getFrequencyFactor() * entry.getFrequency() * entry.getSize() +
                         evictionProperties.getCacheMissFactor() * entry.getCacheMissDurationTime();
                 keyWeightMappings.put(entry.getKey(), weight);
             }
         });
         return keyWeightMappings;
+    }
+
+    // Fresh entries should be protected from eviction for the specified time interval
+    private boolean shouldProtect(KeyStats keyStats) {
+        return (System.currentTimeMillis() - keyStats.getInsertedTime()) < evictionProperties.getFreshnessThreshold();
     }
 }
