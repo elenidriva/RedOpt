@@ -30,15 +30,25 @@ redis:
   eviction:
     # The threshold after which the eviction mechanism will be activated.
     # Depicts a percentage of the memory used. 80% memory used
-    memoryUsageThreshold: 75.50
+    memoryUsageThreshold: 90.00
     # The minutes an entry is considered fresh and does not constitute an eviction candidate.
     # Time in Millis. For instance, 10 minutes protection: 10 * 60 * 1000 = 600000
     freshnessThreshold: 500000
+    # The number of candidates to evict.
+    topEvictionCandidates: 2
+    # The various factors to be used along with metrics towards key eviction decision-making.
+    # All the factors summed up should be 1.
+    factors:
+      # Dynamic factor to be multiplied with the cache miss ratio in order to produce the corresponding weight.
+      cacheMiss: 0.5
+      # Dynamic factor to be multiplied with the frequency of (k, v) access in order to produce the corresponding weight.
+      frequency: 0.5
+
     # Perhaps SLA
     scheduler:
       cron:
-        expression: "-"
-        # expression: 30 * * * * ?
+        # expression: "-"
+        expression: 30 * * * * ?
         # to disable set the following
         # expression: -""
   cleanup:

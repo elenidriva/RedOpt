@@ -11,7 +11,11 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class CachingService {
 
-    public static final Map<String, Long> CACHE_MISS_MAPPINGS = new HashMap<>();
+    public static final Map<String, Long> CACHE_MISS_MAPPINGS = new HashMap<>() {
+        {
+            put("totalMisses", 0L);
+        }
+    };
 
     private final CacheRepository cacheRepository;
     private final KeyStatsCacheRepository keyStatsCacheRepository;
@@ -29,7 +33,7 @@ public class CachingService {
     public Map<String, Object> get(String id) {
         Map<String, Object> object = cacheRepository.get(id);
         keyStatsCacheRepository.increment(id);
-        long cacheMissTime =  System.currentTimeMillis();
+        long cacheMissTime = System.currentTimeMillis();
         if (Objects.isNull(object)) {
             CACHE_MISS_MAPPINGS.put(id, cacheMissTime);
         }
@@ -45,6 +49,7 @@ public class CachingService {
         long now = System.currentTimeMillis();
         long cacheMissTime = now - CACHE_MISS_MAPPINGS.get(id);
         CACHE_MISS_MAPPINGS.remove(id);
+        CACHE_MISS_MAPPINGS.put("totalMisses", CACHE_MISS_MAPPINGS.get("totalMisses") + 1);
         keyStatsCacheRepository.updateCacheMissTime(id, cacheMissTime);
     }
 

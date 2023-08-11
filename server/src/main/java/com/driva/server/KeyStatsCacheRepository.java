@@ -6,6 +6,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -62,6 +64,10 @@ public class KeyStatsCacheRepository {
     public Set<String> getKeys() {
         final Set<String> bucketKeys = valueOperations.getOperations().keys(toKey("*"));
         return bucketKeys == null ? emptySet() : bucketKeys.stream().map(KeyStatsCacheRepository::fromKey).collect(Collectors.toSet());
+    }
+
+    public List<KeyStats> getAllMetadata() {
+        return (List<KeyStats>) (Object) valueOperations.multiGet(valueOperations.getOperations().keys(toKey("*")));
     }
 
     public void put(final KeyMetrics keyMetrics) {
