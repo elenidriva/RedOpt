@@ -37,9 +37,12 @@ public class EvictionScheduler {
             sortedWeights.stream()
                     .limit(evictionProperties.getTopEvictionCandidates())
                     .forEach(candidate -> {
-                        log.info(String.format("Evicting key [%s]", fromKey(candidate.getKey())));
+                        log.info(String.format("Evicting key from data [%s]", fromKey(candidate.getKey())));
                         // Periodic
                         cachingService.delete(fromKey(candidate.getKey()));
+                        KeyStats keyStats = keyStatsCacheRepository.get(candidate.getKey());
+                        keyStats.setActive(false);
+                        keyStatsCacheRepository.update(keyStats);
                     });
         } else {
             log.info("No need to invoke eviction mechanism");

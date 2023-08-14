@@ -12,5 +12,8 @@ public class CleanupProperties {
     private int window = 5 * 6000;
     private Long freshnessThreshold = 600000L;
 
+    private Double activeWeight = 0.6;
+    private Double inactiveWeight = 0.4;
+
     private String cronExpression = "* /2 * * * ?";
 }

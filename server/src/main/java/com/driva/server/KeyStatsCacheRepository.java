@@ -85,7 +85,7 @@ public class KeyStatsCacheRepository {
     }
 
     private static KeyStats createKeyStats(KeyMetrics keyMetrics) {
-        return new KeyStats(toKey(keyMetrics.getKey()), 0L, keyMetrics.getSize(), System.currentTimeMillis(), 0L,  0L, 0L, 0.0);
+        return new KeyStats(toKey(keyMetrics.getKey()), 0L, keyMetrics.getSize(), System.currentTimeMillis(), 0L,  0L, 0L, true, 0.0);
     }
 
     public void update(final KeyStats keyStats) {
