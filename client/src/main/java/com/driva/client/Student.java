@@ -29,15 +29,26 @@ public class Student implements Serializable {
     @Column(name="password", length=15000, nullable=false)
     private String password;
 
-    public Student(String name, String surname, String email, String password) {
+    @Column(name="sex", length=15000, nullable=false)
+    private String sex;
+
+    @Column(name="age", length=3, nullable=false)
+    private Integer age;
+
+    @Column(name="favouriteTeam", length=25, nullable=false)
+    private String favouriteTeam;
+
+
+    public Student() {
+    }
+
+    public Student(String name, String surname, String email, String password, String sex, Integer age, String favouriteTeam) {
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.password = password;
+        this.sex = sex;
+        this.age = age;
+        this.favouriteTeam = favouriteTeam;
     }
-
-    public Student() {
-
-    }
-
 }

@@ -10,5 +10,7 @@ public class StudentDTO {
     private String surname;
     private String email;
     private String password;
-    // ...
+    private String sex;
+    private Integer age;
+    private String favouriteTeam;
 }

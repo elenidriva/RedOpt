@@ -75,8 +75,6 @@ public class KeyStatsCacheRepository {
         if (retrievedKeyStats != null) {
             retrievedKeyStats.setFrequency(retrievedKeyStats.getFrequency());
             retrievedKeyStats.setSize(keyMetrics.getSize());
-            // retrievedKeyStats.setLastQueriedTime(System.currentTimeMillis());
-            // retrievedKeyStats.setWeight();
             valueOperations.set(retrievedKeyStats.getKey(), retrievedKeyStats);
         } else {
             valueOperations.set(toKey(keyMetrics.getKey()), createKeyStats(keyMetrics));
@@ -85,7 +83,7 @@ public class KeyStatsCacheRepository {
     }
 
     private static KeyStats createKeyStats(KeyMetrics keyMetrics) {
-        return new KeyStats(toKey(keyMetrics.getKey()), 0L, keyMetrics.getSize(), System.currentTimeMillis(), 0L,  0L, 0L, true, 0.0);
+        return new KeyStats(toKey(keyMetrics.getKey()), 0L, keyMetrics.getSize(), System.currentTimeMillis(), 0L,  0L, 0L, true);
     }
 
     public void update(final KeyStats keyStats) {

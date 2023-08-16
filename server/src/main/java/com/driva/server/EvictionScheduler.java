@@ -21,6 +21,11 @@ public class EvictionScheduler {
     private final KeyStatsCacheRepository keyStatsCacheRepository;
     private final CachingService cachingService;
 
+    // Scenarios:
+    // 1. Max Cache capacity
+    // 2. Random Eviction
+    // 3. All Eviction
+
     @Scheduled(cron = "${redis.eviction.scheduler.cron.expression}")
     public void process() {
         log.info("========= Starting eviction task =========");
@@ -40,7 +45,7 @@ public class EvictionScheduler {
                         log.info(String.format("Evicting key from data [%s]", fromKey(candidate.getKey())));
                         // Periodic
                         cachingService.delete(fromKey(candidate.getKey()));
-                        KeyStats keyStats = keyStatsCacheRepository.get(candidate.getKey());
+                        KeyStats keyStats = keyStatsCacheRepository.get(fromKey(candidate.getKey()));
                         keyStats.setActive(false);
                         keyStatsCacheRepository.update(keyStats);
                     });

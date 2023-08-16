@@ -1,15 +1,12 @@
 package com.driva.client;
 
 
-import aj.org.objectweb.asm.TypeReference;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +44,13 @@ public class StudentService {
 
     public Student createStudent(StudentDTO studentDTO) {
         log.info("Saving student.");
-        Student student = new Student(studentDTO.getName(), studentDTO.getSurname(), studentDTO.getEmail(), studentDTO.getPassword());
+        Student student = new Student(studentDTO.getName(),
+                studentDTO.getSurname(),
+                studentDTO.getEmail(),
+                studentDTO.getPassword(),
+                studentDTO.getSex(),
+                studentDTO.getAge(),
+                studentDTO.getFavouriteTeam());
         Student st = studentRepository.save(student);
         log.info(String.format("Saved student with id [%s].", st.getId()));
         restTemplate.postForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/put/{id}")
@@ -71,10 +74,15 @@ public class StudentService {
         log.info(String.format("Updating student with id: [%s]", id));
         Optional<Student> student = studentRepository.findById(id);
         student.ifPresent(student1 -> {
+            log.info("Student found.");
             student1.setName(studentDTO.getName());
             student1.setSurname(studentDTO.getSurname());
             student1.setEmail(studentDTO.getEmail());
             student1.setPassword(studentDTO.getPassword());
+            student1.setSex(studentDTO.getSex());
+            student1.setAge(studentDTO.getAge());
+            student1.setFavouriteTeam(studentDTO.getFavouriteTeam());
+
             studentRepository.save(student1);
             restTemplate.postForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/put/{id}")
                             .buildAndExpand(student1.getId().toString())
