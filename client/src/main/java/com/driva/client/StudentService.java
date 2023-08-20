@@ -1,7 +1,10 @@
 package com.driva.client;
 
 
-import lombok.RequiredArgsConstructor;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -13,22 +16,36 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class StudentService {
 
     private final StudentRepository studentRepository;
     private final RestTemplate restTemplate;
 
+    Counter cacheMissCounter;
+
+    public StudentService(StudentRepository studentRepository, RestTemplate restTemplate, CompositeMeterRegistry registry) {
+        this.studentRepository = studentRepository;
+        this.restTemplate = restTemplate;
+        cacheMissCounter = Counter
+                .builder("RedisOptis")
+                .description("indicates instance count of the object")
+                .tags("redisOptis", "cache.miss")
+                .register(registry);
+    }
+
     public Student getStudent(Long id) {
         log.info(String.format("Attempting to retrieve Student with id: [%s].", id));
         Student student = restTemplate
                 .getForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/get/{id}").buildAndExpand(id.toString()).toUri(), Student.class);
-       if (student == null) {
-           student =  studentRepository.findById(id).orElseThrow(() -> new RuntimeException("The student does not exist."));
-           restTemplate.postForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/put/{id}")
-                   .buildAndExpand(student.getId().toString())
-                   .toUri(), student, Void.class);
-       }
+        if (student == null) {
+            student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("The student does not exist."));
+            cacheMissCounter.increment();
+            log.info(String.format("Cache Miss retrieving Student with id: [%s].", id));
+            restTemplate.postForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/put/{id}")
+                    .buildAndExpand(student.getId().toString())
+                    .toUri(), student, Void.class);
+        }
 
         return student;
     }
@@ -38,7 +55,7 @@ public class StudentService {
         log.info(String.format("Attempting to retrieve Students"));
         List<Student> students = restTemplate
                 .getForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/get/").build().toUri(), List.class);
-            return studentRepository.findAll();
+        return studentRepository.findAll();
 
     }
 
@@ -54,8 +71,8 @@ public class StudentService {
         Student st = studentRepository.save(student);
         log.info(String.format("Saved student with id [%s].", st.getId()));
         restTemplate.postForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/put/{id}")
-                        .buildAndExpand(st.getId().toString())
-                        .toUri(), student, Void.class);
+                .buildAndExpand(st.getId().toString())
+                .toUri(), student, Void.class);
         return st;
     }
 
@@ -64,8 +81,8 @@ public class StudentService {
         log.info(String.format("Deleting student with id: [%s]", id));
         studentRepository.deleteById(id);
         restTemplate.delete(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/delete/{id}")
-                        .buildAndExpand(id.toString())
-                        .toUri());
+                .buildAndExpand(id.toString())
+                .toUri());
         log.info("Deleted student.");
 
     }
@@ -85,8 +102,8 @@ public class StudentService {
 
             studentRepository.save(student1);
             restTemplate.postForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/put/{id}")
-                            .buildAndExpand(student1.getId().toString())
-                            .toUri(), student, Void.class);
+                    .buildAndExpand(student1.getId().toString())
+                    .toUri(), student, Void.class);
         });
     }
 

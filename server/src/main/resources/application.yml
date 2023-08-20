@@ -29,11 +29,11 @@ server:
 redis:
   eviction:
     # The threshold after which the eviction mechanism will be activated.
-    # Depicts a percentage of the memory used. 80% memory used
-    memoryUsageThreshold: 90.00
+    # Depicts a percentage of the memory used. 80% memory used, for instance
+    memoryUsageThreshold: 92.00
     # The minutes an entry is considered fresh and does not constitute an eviction candidate.
     # Time in Millis. For instance, 10 minutes protection: 10 * 60 * 1000 = 600000
-    freshnessThreshold: 500000
+    freshnessThreshold: 15000
     # The number of candidates to evict.
     topEvictionCandidates: 5
     # The various factors to be used along with metrics towards key eviction decision-making.
@@ -47,9 +47,9 @@ redis:
     # Perhaps SLA
     scheduler:
       cron:
-        expression: 30 * * * * ?
+        # expression: 30 * * * * ?
         # to disable set the following
-        # expression: -""
+        expression: "-"
   cleanup:
     # To be used to clean up in-memory keys (due to cache miss) that are stored at least for the specified window time.
     # Time in Millis.
@@ -57,8 +57,8 @@ redis:
     freshnessThreshold: 500000
     scheduler:
       cron:
-        # expression: "-"
-        expression: 0 0/2 * * * ?
+        expression: "-"
+        # expression: 0 0/2 * * * ?
         # A special cron expression value that indicates a disabled trigger: "-".
         # This is primarily meant for use with ${...} placeholders, allowing for external disabling of corresponding scheduled methods.
         # expression: "-"

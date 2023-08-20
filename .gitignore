@@ -8,4 +8,7 @@
 /dataSources.local.xml
 /target
 .idea
-
+/prometheus/data/
+/*.log
+/grafana
+/data/grafana

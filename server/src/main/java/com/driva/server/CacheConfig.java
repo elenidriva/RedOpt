@@ -29,8 +29,6 @@ public class CacheConfig {
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(jdkSerializationRedisSerializer);
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-        RedisConnection redisCon = connectionFactory.getConnection();
-        redisCon.setConfig("maxmemory-policy", "allkeys-lfu");
         redisTemplate.setHashValueSerializer(jdkSerializationRedisSerializer);
         redisTemplate.setConnectionFactory(connectionFactory);
         return redisTemplate;

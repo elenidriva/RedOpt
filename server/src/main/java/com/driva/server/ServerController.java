@@ -12,22 +12,22 @@ public class ServerController {
 
     private final CachingService cachingService;
 
-    @Timed(value = "RedisOptis - getStudent")
+    @Timed(value = "RedisOptisServer - getStudent")
     @GetMapping("/cache/get/{id}")
     public Map<String, Object> get(@PathVariable String id) {
-        return cachingService.get(id);
+        return cachingService.getM(id);
     }
 
-    @Timed(value = "RedisOptis - putStudent")
+    @Timed(value = "RedisOptisServer - putStudent")
     @PostMapping("/cache/put/{id}")
     public void put(@PathVariable String id, @RequestBody Map<String, Object> object) {
-        cachingService.put(id, object);
+        cachingService.putM(id, object);
     }
 
-    @Timed(value = "RedisOptis - deleteStudent")
+    @Timed(value = "RedisOptisServer - deleteStudent")
     @DeleteMapping("/cache/delete/{id}")
     public void delete(@PathVariable String id) {
-        cachingService.delete(id);
+        cachingService.deleteM(id);
     }
 
     @GetMapping("/cache/memory-stats")

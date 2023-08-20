@@ -1,0 +1,37 @@
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ['prometheus:9090']
+        labels:
+          application: 'RedisOptis'
+#  - job_name: "prometheus-redisclassic"
+#    static_configs:
+#      - targets: [ "localhost:9092" ]
+  - job_name: 'RedisOptis input'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 2s
+    static_configs:
+      - targets: ['host.docker.internal:8080']
+        labels:
+          application: 'RedisOptis'
+  - job_name: 'RedisClassic input server'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 2s
+    static_configs:
+      - targets: [ 'host.docker.internal:8082' ]
+        labels:
+          application: 'RedisClassic'
+  - job_name: 'RedisClassic input client'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 2s
+    static_configs:
+      - targets: [ 'host.docker.internal:8083' ]
+        labels:
+          application: 'RedisClassic Client'
+  - job_name: 'RedisOptis input client'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 2s
+    static_configs:
+      - targets: [ 'host.docker.internal:8081' ]
+        labels:
+          application: 'RedisOptis Client'
