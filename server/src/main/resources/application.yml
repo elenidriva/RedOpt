@@ -30,19 +30,21 @@ redis:
   eviction:
     # The threshold after which the eviction mechanism will be activated.
     # Depicts a percentage of the memory used. 80% memory used, for instance
-    memoryUsageThreshold: 92.00
+    memoryUsageThreshold: 4194304
     # The minutes an entry is considered fresh and does not constitute an eviction candidate.
-    # Time in Millis. For instance, 10 minutes protection: 10 * 60 * 1000 = 600000
-    freshnessThreshold: 15000
+    # Time in Millis. For instance, 10 minutes protection: 10 * 60 * 1000 = 600000  1 * 3 * 1000
+    freshnessThreshold: 5000
     # The number of candidates to evict.
-    topEvictionCandidates: 5
+    topEvictionCandidates: 2
     # The various factors to be used along with metrics towards key eviction decision-making.
     # All the factors summed up should be 1.
     factors:
       # Dynamic factor to be multiplied with the cache miss ratio in order to produce the corresponding weight.
       cacheMiss: 0.5
       # Dynamic factor to be multiplied with the frequency of (k, v) access in order to produce the corresponding weight.
-      frequency: 0.5
+      frequency: 0.55
+      size: 0.25
+      lastQueried: 0.2
 
     # Perhaps SLA
     scheduler:

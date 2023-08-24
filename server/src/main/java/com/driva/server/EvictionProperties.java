@@ -15,14 +15,21 @@ import java.util.Map;
 @ConfigurationProperties("redis.eviction")
 public class EvictionProperties {
 
-    private Double memoryUsageThreshold = 80.00;
+    private Long memoryUsageThreshold = 2097152L;
     private Long freshnessThreshold = 600000L;
     private Long topEvictionCandidates = 2L;
 
     @Value("${redis.eviction.factors.cacheMiss}")
     private Double cacheMissFactor;
+
     @Value("${redis.eviction.factors.frequency}")
     private Double frequencyFactor;
+
+    @Value("${redis.eviction.factors.size}")
+    private Double sizeFactor;
+
+    @Value("${redis.eviction.factors.lastQueried}")
+    private Double lastQueriedFactor;
 //    private Double cacheMissWeight = 50.0;
 //    private Double objectSizeWeight = 50.0;
 }

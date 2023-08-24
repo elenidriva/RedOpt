@@ -12,6 +12,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class ServerApplication {
 
     public static void main(String[] args) {
+        System.setProperty("spring.devtools.restart.enabled", "false");
+        System.setProperty("spring.devtools.livereload.enabled", "false");
         SpringApplication.run(ServerApplication.class, args);
     }
 

@@ -27,33 +27,33 @@ public class CleanupService {
     public void cleanupM() {
         //   log.info("========= Initiating cleanup service =========");
         CACHE_MISS_MAPPINGS.entrySet().removeIf(entry -> System.currentTimeMillis() - entry.getValue() > cleanupProperties.getWindow());
-        log.info("Performed in memory cleanup");
-        Map<String, Double> weights = new TreeMap<>();
-        Map<String, KeyStats> keyStats = KEY_STATS_MAP;
-        if (keyStatsCacheRepository.percentageOccupied() > evictionProperties.getMemoryUsageThreshold()) {
-            keyStats.forEach((key, value) -> {
-                if (!value.isActive()) {
-                    double weight = cleanupProperties.getInactiveWeight() * value.getFrequency()
-                            + lastQueriedTime(value.getLastQueriedTime());
-                    weights.put(key, weight);
-                }
-            });
-
-            List<Map.Entry<String, Double>> sortedWeights = weights.entrySet()
-                    .stream()
-                    .sorted(Map.Entry.comparingByValue())
-                    .collect(Collectors.toList());
-            sortedWeights.stream()
-                    .limit(evictionProperties.getTopEvictionCandidates())
-                    .forEach(candidate -> {
-                        log.info(String.format("Evicting key from metadata [%s]", fromKey(candidate.getKey())));
-                        // Periodic
-                        KEY_STATS_MAP.remove(candidate.getKey());
-                    });
-
-        } else {
-            //  log.info("No need to invoke metadata cleanup mechanism");
-        }
+//        log.info("Performed in memory cleanup");
+//        Map<String, Double> weights = new TreeMap<>();
+//        Map<String, KeyStats> keyStats = KEY_STATS_MAP;
+//        if (keyStatsCacheRepository.percentageOccupied() > evictionProperties.getMemoryUsageThreshold()) {
+//            keyStats.forEach((key, value) -> {
+//                if (!value.isActive()) {
+//                    double weight = cleanupProperties.getInactiveWeight() * value.getFrequency()
+//                            + lastQueriedTime(value.getLastQueriedTime());
+//                    weights.put(key, weight);
+//                }
+//            });
+//
+//            List<Map.Entry<String, Double>> sortedWeights = weights.entrySet()
+//                    .stream()
+//                    .sorted(Map.Entry.comparingByValue())
+//                    .collect(Collectors.toList());
+//            sortedWeights.stream()
+//                    .limit(evictionProperties.getTopEvictionCandidates())
+//                    .forEach(candidate -> {
+//                        log.info(String.format("Evicting key from metadata [%s]", fromKey(candidate.getKey())));
+//                        // Periodic
+//                        KEY_STATS_MAP.remove(candidate.getKey());
+//                    });
+//
+//        } else {
+//            //  log.info("No need to invoke metadata cleanup mechanism");
+//        }
         // introduce max capacity for metadata?
         // log.info("========= Finished cleanup service =========");
     }

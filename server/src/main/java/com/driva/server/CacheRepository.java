@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptySet;
@@ -22,6 +24,8 @@ public class CacheRepository {
     private final ValueOperations<String, Object> valueOperations;
     private final RedisTemplate redisTemplate;
 
+    private final ExecutorService queryExecutor = Executors.newCachedThreadPool();
+
     public CacheRepository(final RedisTemplate<String, Object> redisTemplate) {
         this.valueOperations = redisTemplate.opsForValue();
         this.redisTemplate = redisTemplate;
@@ -33,6 +37,10 @@ public class CacheRepository {
         return new KeyMetrics(id, valueOperations.size(toKey(id)));
     }
 
+    public void putM(final String id, final Map<String, Object> object) {
+        valueOperations.set(toKey(id), object);
+    }
+
     public Map<String, Object> get(final String id) {
         return (Map<String, Object>) valueOperations.get(toKey(id));
     }
@@ -40,6 +48,11 @@ public class CacheRepository {
     public void delete(final String id) {
         valueOperations.getOperations().delete(toKey(id));
     }
+
+    public Long getSize(final String id) {
+        return valueOperations.size(toKey(id));
+    }
+
 
     public Set<String> getKeys() {
         final Set<String> bucketKeys = valueOperations.getOperations().keys(toKey("*"));

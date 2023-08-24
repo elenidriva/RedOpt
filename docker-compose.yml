@@ -5,7 +5,7 @@ services:
     restart: always
     ports:
       - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning --requirepass "redis" --maxmemory 2mb
+    command: redis-server --save 20 1 --loglevel warning --requirepass "redis" --maxmemory 4718592
     volumes:
       - cache:/data
   postgres:
@@ -17,20 +17,20 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=redis-opt
-  pgadmin:
-    container_name: "redisoptis_pgadmin"
-    ports:
-      - 5454:5454
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=eleni@mailsac.com
-      - PGADMIN_DEFAULT_PASSWORD=eleni
-      - PGADMIN_LISTEN_PORT=5454
-    image: 'dpage/pgadmin4:6.1'
-    depends_on:
-      - postgres
-    links:
-      - 'postgres:pgsql-server'
-    restart: unless-stopped
+#  pgadmin:
+#    container_name: "redisoptis_pgadmin"
+#    ports:
+#      - 5454:5454
+#    environment:
+#      - PGADMIN_DEFAULT_EMAIL=eleni@mailsac.com
+#      - PGADMIN_DEFAULT_PASSWORD=eleni
+#      - PGADMIN_LISTEN_PORT=5454
+#    image: 'dpage/pgadmin4:6.1'
+#    depends_on:
+#      - postgres
+#    links:
+#      - 'postgres:pgsql-server'
+#    restart: unless-stopped
   prometheus:
     image: prom/prometheus:v2.39.0
     container_name: "redisoptis_prometheus"

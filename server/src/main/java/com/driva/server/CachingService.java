@@ -30,22 +30,24 @@ public class CachingService {
     private final ExecutorService commandExecutor = Executors.newCachedThreadPool();
 
     public void putM(String id, Map<String, Object> object) {
-        KeyMetrics keyMetrics = cacheRepository.put(id, object);
+        cacheRepository.putM(id, object);
         commandExecutor.execute(() -> {
+            Long size = cacheRepository.getSize(id);
             KeyStats keyStats = KEY_STATS_MAP.get(toKey(id));
-            if(keyStats != null) {
+            if (keyStats != null) {
                 keyStats.setFrequency(keyStats.getFrequency());
-                keyStats.setSize(keyMetrics.getSize());
+                keyStats.setSize(size);
                 KEY_STATS_MAP.put(keyStats.getKey(), keyStats);
             } else {
-                KEY_STATS_MAP.put(toKey(id), createKeyStats(keyMetrics));
+                KEY_STATS_MAP.put(toKey(id), createKeyStats(id, size));
             }
             if (CACHE_MISS_MAPPINGS.containsKey(id)) {
-                cacheMiss(id);
+                cacheMissM(id);
             }
-            evictionService.evict();
-            cleanupService.cleanupM();
+            evictionService.evictMRefactored();
+            //   cleanupService.cleanupM();
         });
+        return;
 
     }
 
@@ -53,7 +55,7 @@ public class CachingService {
         Map<String, Object> object = cacheRepository.get(id);
         queryExecutor.execute(() -> {
             KeyStats keyStats = KEY_STATS_MAP.get(toKey(id));
-            if(Objects.nonNull(keyStats)) {
+            if (Objects.nonNull(keyStats)) {
                 keyStats.setFrequency(keyStats.getFrequency() + 1);
                 keyStats.setLastQueriedTime(System.currentTimeMillis());
                 KEY_STATS_MAP.put(keyStats.getKey(), keyStats);
@@ -74,48 +76,64 @@ public class CachingService {
     }
 
     private static KeyStats createKeyStats(KeyMetrics keyMetrics) {
-        return new KeyStats(toKey(keyMetrics.getKey()), 0L, keyMetrics.getSize(), System.currentTimeMillis(), 0L,  0L, 0L, true);
+        return new KeyStats(toKey(keyMetrics.getKey()), 0L, keyMetrics.getSize(), System.currentTimeMillis(), 0L, 0L, 0L, true);
     }
 
-    public void put(String id, Map<String, Object> object) {
-        KeyMetrics keyMetrics = cacheRepository.put(id, object);
-        commandExecutor.execute(() -> {
-            keyStatsCacheRepository.put(keyMetrics);
-            if (CACHE_MISS_MAPPINGS.containsKey(id)) {
-                cacheMiss(id);
-            }
-            evictionService.evict();
-            cleanupService.cleanup();
-
-        });
-
+    private static KeyStats createKeyStats(String id, Long size) {
+        return new KeyStats(toKey(id), 0L, size, System.currentTimeMillis(), 0L, 0L, 0L, true);
     }
 
-    public Map<String, Object> get(String id) {
-        Map<String, Object> object = cacheRepository.get(id);
-        queryExecutor.execute(() -> {
-            keyStatsCacheRepository.increment(id);
-            long cacheMissTime = System.currentTimeMillis();
-            if (Objects.isNull(object)) {
-                CACHE_MISS_MAPPINGS.put(id, cacheMissTime);
-            }
-        });
-        return object;
-    }
+//    public void put(String id, Map<String, Object> object) {
+//        KeyMetrics keyMetrics = cacheRepository.put(id, object);
+//        commandExecutor.execute(() -> {
+//            keyStatsCacheRepository.put(keyMetrics);
+//            if (CACHE_MISS_MAPPINGS.containsKey(id)) {
+//                cacheMiss(id);
+//            }
+//            evictionService.evict();
+//            cleanupService.cleanup();
+//
+//        });
+//
+//    }
 
-    public void delete(String id) {
-        cacheRepository.delete(id);
-        commandExecutor.execute(() -> {
-            keyStatsCacheRepository.delete(id);
-        });
-    }
+//    public Map<String, Object> get(String id) {
+//        Map<String, Object> object = cacheRepository.get(id);
+//        queryExecutor.execute(() -> {
+//            keyStatsCacheRepository.increment(id);
+//            long cacheMissTime = System.currentTimeMillis();
+//            if (Objects.isNull(object)) {
+//                CACHE_MISS_MAPPINGS.put(id, cacheMissTime);
+//            }
+//        });
+//        return object;
+//    }
+//
+//    public void delete(String id) {
+//        cacheRepository.delete(id);
+//        commandExecutor.execute(() -> {
+//            keyStatsCacheRepository.delete(id);
+//        });
+//    }
+//
+//    private void cacheMiss(String id) {
+//        long now = System.currentTimeMillis();
+//        long cacheMissTime = now - CACHE_MISS_MAPPINGS.get(id);
+//        CACHE_MISS_MAPPINGS.remove(id);
+//        counter = counter + 1;
+//        keyStatsCacheRepository.updateCacheMissTime(id, cacheMissTime);
+//    }
 
-    private void cacheMiss(String id) {
+    private void cacheMissM(String id) {
         long now = System.currentTimeMillis();
         long cacheMissTime = now - CACHE_MISS_MAPPINGS.get(id);
         CACHE_MISS_MAPPINGS.remove(id);
         counter = counter + 1;
-        keyStatsCacheRepository.updateCacheMissTime(id, cacheMissTime);
+        KeyStats keyStats = KEY_STATS_MAP.get(toKey(id));
+        keyStats.setCacheMissDurationTime(cacheMissTime);
+        keyStats.setCacheMissFrequency(keyStats.getCacheMissFrequency() + 1);
+        keyStats.setActive(true);
+        KEY_STATS_MAP.put(toKey(id), keyStats);
     }
 
     public MemoryStats getMemoryStats() {

@@ -1,10 +1,7 @@
 package com.driva.client;
 
-
 import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -16,7 +13,6 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-//@RequiredArgsConstructor
 public class StudentService {
 
     private final StudentRepository studentRepository;
@@ -51,13 +47,13 @@ public class StudentService {
     }
 
 
-    public List<Student> getStudents() {
-        log.info(String.format("Attempting to retrieve Students"));
-        List<Student> students = restTemplate
-                .getForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/get/").build().toUri(), List.class);
-        return studentRepository.findAll();
-
-    }
+//    public List<Student> getStudents() {
+//        log.info(String.format("Attempting to retrieve Students"));
+//        List<Student> students = restTemplate
+//                .getForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/get/").build().toUri(), List.class);
+//        return studentRepository.findAll();
+//
+//    }
 
     public Student createStudent(StudentDTO studentDTO) {
         log.info("Saving student.");
@@ -69,7 +65,7 @@ public class StudentService {
                 studentDTO.getAge(),
                 studentDTO.getFavouriteTeam());
         Student st = studentRepository.save(student);
-        log.info(String.format("Saved student with id [%s].", st.getId()));
+        // log.info(String.format("Saved student with id [%s].", st.getId()));
         restTemplate.postForObject(UriComponentsBuilder.fromHttpUrl("http://localhost:8080/cache/put/{id}")
                 .buildAndExpand(st.getId().toString())
                 .toUri(), student, Void.class);
