@@ -12,19 +12,19 @@ public class ServerController {
 
     private final CachingService cachingService;
 
-    @Timed(value = "RedisOptisServer - getStudent")
+    @Timed(value = "RedisClassicServer - getStudent")
     @GetMapping("/cache/{id}")
     public Student get(@PathVariable Long id) {
         return cachingService.getM(id);
     }
 
-    @Timed(value = "RedisOptisServer - putStudent")
+    @Timed(value = "RedisClassicServer - putStudent")
     @PostMapping("/cache/")
     public Student save(@RequestBody StudentDTO studentDTO) {
         return cachingService.createStudent(studentDTO);
     }
 
-    @Timed(value = "RedisOptisServer - deleteStudent")
+    @Timed(value = "RedisClassicServer - deleteStudent")
     @DeleteMapping("/cache/{id}")
     public void delete(@PathVariable Long id) {
         cachingService.deleteM(id);

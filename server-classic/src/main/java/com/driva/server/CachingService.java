@@ -23,9 +23,9 @@ public class CachingService {
         this.keyStatsCacheRepository = keyStatsCacheRepository;
         this.studentRepository = studentRepository;
         cacheMissCounter = Counter
-                .builder("RedisOptis")
+                .builder("RedisClassic")
                 .description("indicates instance count of the object")
-                .tags("redisOptis", "cache.miss")
+                .tags("redisClassic", "cache.miss")
                 .register(registry);
     }
 
@@ -53,7 +53,7 @@ public class CachingService {
             log.info(String.format("Cache Miss retrieving Student with id: [%s].", id));
             cacheRepository.putM(String.valueOf(student.getId()), student);
         }
-            return student;
+        return student;
     }
 
     public void deleteM(Long id) {

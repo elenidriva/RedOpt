@@ -2,7 +2,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/redis-opt
+    url: jdbc:postgresql://localhost:5433/redis-opt
     username: admin
     password: admin
     driver-class-name: org.postgresql.Driver
@@ -19,12 +19,12 @@ spring:
     type: redis
   redis:
     host: localhost
-    port: 6380
+    port: 6381
     password: redis
 
 
 server:
-    port: 8085
+    port: 8086
 
 redis:
   eviction:
@@ -75,4 +75,4 @@ management:
 logging:
   file:
     path: ../../
-    name:  optis.logs
+    name:  classic.logs

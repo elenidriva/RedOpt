@@ -1,18 +1,35 @@
-version: '3'
+name: optis
 services:
-  redis:
-    image: redis:6.2-alpine
-    restart: always
-    ports:
-      - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning --requirepass "redis" --maxmemory 4718592
-    volumes:
-      - cache:/data
+  # redis:
+  #   image: redis:6.2-alpine
+  #   restart: always
+  #   ports:
+  #     - '6379:6379'
+  #   command: redis-server --save 20 1 --loglevel warning --requirepass "redis" --maxmemory 4718592
+  #   volumes:
+  #     - cache:/data
+#  redis-commander:
+#    image: rediscommander/redis-commander:latest
+#    container_name: redisoptis_redis_commander
+#    environment:
+#      - REDIS_HOSTS=local:redis:6379
+#    ports:
+#     - "8081:8081"
+#    restart: always
   postgres:
     image: postgres:14.2-alpine
 
     ports:
       - "5432:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=redis-opt
+  postgres-classic:
+    image: postgres:14.2-alpine
+
+    ports:
+      - "5433:5432"
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
@@ -45,8 +62,17 @@ services:
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
       - '--web.enable-lifecycle'
+      - '--storage.tsdb.retention.time=1y'
+    user: "root"
+    networks:
+      - monitoring
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - redis-exporter_optis
+#      - redis-exporter_classic
   grafana:
-    image: grafana/grafana:7.0.3
+    image: grafana/grafana:9.5.0
     container_name: "redisoptis_grafana"
     depends_on:
       - prometheus
@@ -57,8 +83,40 @@ services:
       - ./grafana/provisioning:/etc/grafana/provisioning
       - ./src:/var/lib/grafana/dashboards
     restart: unless-stopped
+    user: "root"
+    networks:
+      - monitoring
+  redis-exporter_optis:
+    image: oliver006/redis_exporter:v1.62.0
+    container_name: redis_exporter_optis
+    ports:
+      - "9121:9121"
+    environment:
+      - REDIS_ADDR=redis://host.docker.internal:6380,redis://host.docker.internal:6381
+      - REDIS_EXPORTER_INCL_SYSTEM_METRICS=true
+    command:
+      - '--include-system-metrics'
+    networks:
+      - monitoring
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+#  redis-exporter_classic:
+#    image: oliver006/redis_exporter:v1.62.0
+#    container_name: redis_exporter_classic
+#    ports:
+#      - "9122:9121"
+#    environment:
+#      - REDIS_ADDR=redis://host.docker.internal:6381
+#      - REDIS_EXPORTER_INCL_SYSTEM_METRICS=true
+#    command:
+#      - '--include-system-metrics'
+#    networks:
+#      - monitoring
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway"
 volumes:
   cache:
     driver: local
-
-
+networks:
+  monitoring:
+    driver: bridge
