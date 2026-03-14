@@ -70,7 +70,7 @@ services:
       - "host.docker.internal:host-gateway"
     depends_on:
       - redis-exporter_optis
-#      - redis-exporter_classic
+      - redis-exporter_classic
   grafana:
     image: grafana/grafana:9.5.0
     container_name: "redisoptis_grafana"
@@ -92,7 +92,7 @@ services:
     ports:
       - "9121:9121"
     environment:
-      - REDIS_ADDR=redis://host.docker.internal:6380,redis://host.docker.internal:6381
+      - REDIS_ADDR=redis://host.docker.internal:6380
       - REDIS_EXPORTER_INCL_SYSTEM_METRICS=true
     command:
       - '--include-system-metrics'
@@ -100,20 +100,20 @@ services:
       - monitoring
     extra_hosts:
       - "host.docker.internal:host-gateway"
-#  redis-exporter_classic:
-#    image: oliver006/redis_exporter:v1.62.0
-#    container_name: redis_exporter_classic
-#    ports:
-#      - "9122:9121"
-#    environment:
-#      - REDIS_ADDR=redis://host.docker.internal:6381
-#      - REDIS_EXPORTER_INCL_SYSTEM_METRICS=true
-#    command:
-#      - '--include-system-metrics'
-#    networks:
-#      - monitoring
-#    extra_hosts:
-#      - "host.docker.internal:host-gateway"
+  redis-exporter_classic:
+    image: oliver006/redis_exporter:v1.62.0
+    container_name: redis_exporter_classic
+    ports:
+      - "9122:9121"
+    environment:
+      - REDIS_ADDR=redis://host.docker.internal:6381
+      - REDIS_EXPORTER_INCL_SYSTEM_METRICS=true
+    command:
+      - '--include-system-metrics'
+    networks:
+      - monitoring
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 volumes:
   cache:
     driver: local

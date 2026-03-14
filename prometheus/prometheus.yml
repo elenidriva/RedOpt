@@ -35,15 +35,15 @@ scrape_configs:
       - targets: [ 'host.docker.internal:8085' ]
         labels:
           application: 'RedisOptis Client'
-  - job_name: 'Redis Exporter'
+  - job_name: 'RedisOptis Exporter'
     scrape_interval: 2s
     static_configs:
       - targets: [ 'redis-exporter_optis:9121' ]
         labels:
-          application: 'Redis Exporter'
-#  - job_name: 'RedisClassic Cache'
-#    scrape_interval: 2s
-#    static_configs:
-#      - targets: [ 'redis-exporter_classic:9122' ]
-#        labels:
-#          application: 'RedisOptis Cache'
+          application: 'RedisOptis Exporter'
+  - job_name: 'RedisClassic Exporter'
+    scrape_interval: 2s
+    static_configs:
+      - targets: [ 'redis-exporter_classic:9121' ]
+        labels:
+          application: 'RedisClassic Exporter'
