@@ -33,10 +33,22 @@ RedOpt explores whether combining recency with **access frequency and statistica
 This project was developed as part of the MSc thesis:
 
 **Evaluation and Development of New Cache Replacement Policies: The Histogram-based LRU Policy**  
-Athens University of Economics and Business
+Athens University of Economics and Business – Department of Informatics
 
-📄 [Read the full thesis](docs/thesis.pdf)  
-📊 [View the research poster](docs/poster.pdf)
+The repository contains the implementation and experimental environment used in the research.
+
+Additional research material:
+
+- 📄 **Thesis** – detailed design, implementation, and evaluation of the HLRU policy  
+  [Read the full thesis](docs/thesis.pdf)
+
+- 📊 **Research Poster** – visual summary of the algorithm and evaluation results  
+  [View the poster](docs/poster.pdf)
+
+- 🎓 **Thesis Presentation** – slides used for the MSc thesis defense  
+  [View the presentation](docs/thesis-presentation.pdf)
+
+**Key result:** HLRU achieved up to **52.3% fewer cache misses** than Redis LRU in Hot–Cold workloads.
 
 ---
 
