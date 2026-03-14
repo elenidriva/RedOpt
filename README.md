@@ -28,6 +28,18 @@ RedOpt explores whether combining recency with **access frequency and statistica
 
 ---
 
+## Research Context
+
+This project was developed as part of the MSc thesis:
+
+**Evaluation and Development of New Cache Replacement Policies: The Histogram-based LRU Policy**  
+Athens University of Economics and Business
+
+📄 [Read the full thesis](docs/thesis.pdf)  
+📊 [View the research poster](docs/poster.pdf)
+
+---
+
 ## Technical Highlights
 
 - Implemented a new cache eviction policy (**HLRU**) directly inside the Redis source code.
