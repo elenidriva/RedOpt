@@ -44,7 +44,7 @@ RedOpt explores whether combining recency with **access frequency and statistica
 
 HLRU evaluates eviction candidates using both **how recently** and **how frequently** keys were accessed.
 
-![HLRU overview](docs/hlru-overview.png)
+![HLRU overview](docs/HLRU-Overview.png)
 
 Each candidate key maintains:
 
@@ -143,7 +143,7 @@ These scenarios represent common patterns found in:
 
 HLRU improves cache efficiency in workloads where both recency and frequency influence data usefulness.
 
-![Hot & Cold results](docs/hot-cold-results.png)
+![Hot & Cold results](docs/HotNCold-Results.png)
 
 ### Key findings
 
